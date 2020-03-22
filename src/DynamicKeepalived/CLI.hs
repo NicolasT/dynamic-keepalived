@@ -3,15 +3,10 @@ module DynamicKeepalived.CLI (
     , parser
     ) where
 
-import Options.Applicative
+import Options.Applicative (Parser)
 
-data Options = Options { optionsVersion :: Bool
-                       }
+data Options = Options
   deriving (Show, Eq)
 
 parser :: Parser Options
-parser =  Options
-      <$> switch
-          ( long "version"
-         <> short 'v'
-         <> help "Display the version number" )
+parser = pure Options

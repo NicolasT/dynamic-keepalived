@@ -2,26 +2,27 @@ module DynamicKeepalived.Main (
       main
     ) where
 
-import Control.Monad (when)
 import Data.Version (showVersion)
-import System.Exit (exitSuccess)
 
 import Options.Applicative (
       (<**>)
     , ParseError(ShowHelpText)
-    , abortOption, execParser, fullDesc, help, hidden, info, long, short)
+    , abortOption, execParser, fullDesc, help, hidden, info, infoOption, long, short)
 
 import qualified DynamicKeepalived.CLI as CLI
 
 import qualified Paths_dynamic_keepalived
 
 main :: IO ()
-main = execParser opts >>= \options -> do
-    when (CLI.optionsVersion options) $ do
-        putStrLn $ "dynamic-keepalived v" ++ showVersion Paths_dynamic_keepalived.version
-        exitSuccess
+main = execParser opts >>= \CLI.Options -> return ()
   where
-    opts = info (CLI.parser <**> helper) fullDesc
+    opts = info (CLI.parser <**> version <**> helper) fullDesc
+    version = infoOption versionMessage $ mconcat [ long "version"
+                                                  , short 'v'
+                                                  , help "Display the version number"
+                                                  , hidden
+                                                  ]
+    versionMessage = "dynamic-keepalived v" ++ showVersion Paths_dynamic_keepalived.version
     helper = abortOption ShowHelpText $ mconcat [ long "help"
                                                 , short 'h'
                                                 , help "Display this help message"
