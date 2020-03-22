@@ -4,7 +4,9 @@
 name:                dynamic-keepalived
 version:             0.1.0.0
 synopsis:            A daemon to dynamically (re)configure a Keepalived instance
--- description:
+description:
+  The dynamic-keepalived service brings dynamic service discovery (e.g., based
+  on DNS records) to Keepalived.
 homepage:            https://github.com/NicolasT/dynamic-keepalived
 license:             Apache-2.0
 license-file:        LICENSE
