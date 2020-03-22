@@ -1,4 +1,8 @@
-module Main where
+module Main (
+      main
+    ) where
+
+import qualified DynamicKeepalived.Main as M
 
 main :: IO ()
-main = putStrLn "Hello, Haskell!"
+main = M.main
