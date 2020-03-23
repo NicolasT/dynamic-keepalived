@@ -1,8 +1,14 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module DynamicKeepalived.Main (
       main
     ) where
 
+import Control.Monad.IO.Class (liftIO)
 import Data.Version (showVersion)
+
+import Di (Level, Message, MonadDi)
+import qualified Di
 
 import Options.Applicative (
       (<**>)
@@ -13,8 +19,14 @@ import qualified DynamicKeepalived.CLI as CLI
 
 import qualified Paths_dynamic_keepalived
 
+main' :: (MonadDi Level path Message m) => CLI.Options -> m ()
+main' _options = do
+    Di.debug "Running mainloop"
+
 main :: IO ()
-main = execParser opts >>= \CLI.Options -> return ()
+main = Di.new $ \di -> Di.runDiT di $ do
+    options <- liftIO $ execParser opts
+    main' options
   where
     opts = info (CLI.parser <**> version <**> helper) fullDesc
     version = infoOption versionMessage $ mconcat [ long "version"
