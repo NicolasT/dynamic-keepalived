@@ -9,11 +9,7 @@ module DynamicKeepalived (
 import Control.Monad (when)
 import Data.List (nub, sort)
 
-import Data.IP (IP(..))
-
-import Network.DNS (Domain)
-
-import DynamicKeepalived.DSL (MonadDSL(..), RecordType)
+import DynamicKeepalived.DSL (MonadDSL(..), RecordType, Domain, IP)
 
 data Settings = Settings { settingsInterval :: Word
                          , settingsRecordType :: RecordType
