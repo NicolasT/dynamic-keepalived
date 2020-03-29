@@ -1,0 +1,9 @@
+Packages: .
+
+Package dynamic-keepalived
+  Ghc-Options: -Wall
+               -Wincomplete-record-updates
+               -Wincomplete-uni-patterns
+               -Wredundant-constraints
+               -Wcompat
+               -Werror
