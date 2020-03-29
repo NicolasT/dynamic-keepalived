@@ -35,4 +35,4 @@ Executable dynamic-keepalived
                      , optparse-applicative >=0.15.1 && <0.16
   Hs-Source-Dirs:      src
   Default-Language:    Haskell2010
-  Ghc-Options:         -threaded -rtsopts=all -O2 -Wall -fwarn-tabs
+  Ghc-Options:         -rtsopts=all
