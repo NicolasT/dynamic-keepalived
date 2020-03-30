@@ -18,7 +18,7 @@ import DynamicKeepalived.DSL (RecordType(..))
 import DynamicKeepalived.DSL.Interpreter (Interpreter(..), Command(..), runInterpreterT, tracer)
 
 spec :: Spec
-spec = do
+spec =
     describe "iteration" $ do
         it "calls 'sleep' at the end when state doesn't change" $ do
             let (_, acts) = trace (stateAddresses initialState) $ iteration settings initialState
@@ -34,9 +34,7 @@ spec = do
                         (mempty { interpretResolveDNS = \_ _ -> pure ["127.0.0.1"]
                                 , interpretReloadKeepalived = throwM (userError "test")
                                 })
-            act `shouldThrow` (\exc -> and [ isUserError exc
-                                           , ioeGetErrorString exc == "test"
-                                           ])
+            act `shouldThrow` (\exc -> isUserError exc && ioeGetErrorString exc == "test")
         it "reloads keepalived when state changes" $ do
             let ips = ["127.0.0.1"]
             stateAddresses initialState `shouldNotBe` ips
