@@ -32,7 +32,7 @@ Library dynamic-keepalived-internal
                      , bytestring >=0.10.8.2 && <0.11
                      , dns >=4.0.1 && <4.1
                      , iproute >=1.7.9 && <1.8
-                     , mtl >=2.2.2 && <2.3
+                     , transformers >=0.5.5.0 && <0.6
   Hs-Source-Dirs:      lib
   Default-Language:    Haskell2010
 
@@ -56,8 +56,8 @@ Test-Suite test-dynamic-keepalived
   Build-Depends:       base
                      , exceptions >=0.10.0 && <0.11
                      , hspec >=2.7.1 && <2.8
-                     , mtl
-                     , transformers >=0.5.5.0 && <0.6
+                     , mtl >=2.2.2 && <2.3
+                     , transformers
                      , dynamic-keepalived-internal
   Hs-Source-Dirs:      test
   Default-Language:    Haskell2010

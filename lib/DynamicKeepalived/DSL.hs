@@ -9,7 +9,7 @@ module DynamicKeepalived.DSL (
     , Domain
     ) where
 
-import Control.Monad.Trans (MonadTrans, lift)
+import Control.Monad.Trans.Class (MonadTrans, lift)
 
 import Data.ByteString.Lazy (ByteString)
 
