@@ -53,11 +53,13 @@ Executable dynamic-keepalived
 Test-Suite test-dynamic-keepalived
   Type:                exitcode-stdio-1.0
   Main-Is:             Main.hs
+  Other-Modules:       DynamicKeepalived.DSL.Interpreter
+                     , DynamicKeepalived.Test
   Build-Depends:       base
                      , exceptions >=0.10.0 && <0.11
-                     , free
                      , hspec >=2.7.1 && <2.8
                      , mtl
+                     , transformers >=0.5.5.0 && <0.6
                      , dynamic-keepalived-internal
   Hs-Source-Dirs:      test
   Default-Language:    Haskell2010
