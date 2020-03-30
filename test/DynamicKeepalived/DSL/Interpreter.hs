@@ -7,6 +7,7 @@ module DynamicKeepalived.DSL.Interpreter (
     , tracer
     ) where
 
+import Data.Functor (($>))
 import Control.Applicative (liftA2)
 
 import Control.Monad.Writer.Class (MonadWriter, tell)
@@ -48,11 +49,11 @@ data Command = ResolveDNS RecordType Domain
   deriving (Show, Eq)
 
 tracer :: (Applicative f, MonadWriter (f Command) m) => Interpreter m
-tracer = Interpreter { interpretResolveDNS = \t d -> tell' (ResolveDNS t d) *> pure mempty
-                     , interpretRenderConfig = \a -> tell' (RenderConfig a) *> pure mempty
-                     , interpretWriteConfig = \b -> tell' (WriteConfig b)
-                     , interpretReloadKeepalived = tell' (ReloadKeepalived)
-                     , interpretSleep = \l -> tell' (Sleep l)
+tracer = Interpreter { interpretResolveDNS = \t d -> tell' (ResolveDNS t d) $> mempty
+                     , interpretRenderConfig = \a -> tell' (RenderConfig a) $> mempty
+                     , interpretWriteConfig = tell' . WriteConfig
+                     , interpretReloadKeepalived = tell' ReloadKeepalived
+                     , interpretSleep = tell' . Sleep
                      }
   where
     tell' = tell . pure

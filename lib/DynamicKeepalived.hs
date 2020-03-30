@@ -17,8 +17,8 @@ data Settings = Settings { settingsInterval :: Word
                          }
   deriving (Show, Eq)
 
-data State = State { stateAddresses :: [IP]
-                   }
+newtype State = State { stateAddresses :: [IP]
+                      }
   deriving (Show, Eq)
 
 app :: MonadDSL m => Settings -> m a
@@ -31,7 +31,7 @@ initialState = State []
 
 iteration :: MonadDSL m => Settings -> State -> m State
 iteration settings state = do
-    addresses <- (nub . sort) <$> resolveDNS (settingsRecordType settings) (settingsDomain settings)
+    addresses <- nub . sort <$> resolveDNS (settingsRecordType settings) (settingsDomain settings)
 
     let newState = State addresses
 

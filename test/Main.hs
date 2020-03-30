@@ -8,4 +8,4 @@ import qualified DynamicKeepalived.Test
 
 main :: IO ()
 main = hspec $
-    describe "DynamicKeepalived" (DynamicKeepalived.Test.spec)
+    describe "DynamicKeepalived" DynamicKeepalived.Test.spec
