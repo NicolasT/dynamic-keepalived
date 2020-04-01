@@ -1,4 +1,5 @@
 {-# LANGUAGE DefaultSignatures #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeFamilies #-}
 
 module DynamicKeepalived.DSL (
@@ -17,9 +18,16 @@ import Data.IP (IP)
 
 import Network.DNS (Domain)
 
+import Di.Df1 (ToValue(..))
+
 data RecordType = A
                 | AAAA
   deriving (Show, Eq, Enum, Bounded)
+
+instance ToValue RecordType where
+    value v = case v of
+        A -> "A"
+        AAAA -> "AAAA"
 
 class Monad m => MonadDSL m where
     resolveDNS :: RecordType -> Domain -> m [IP]

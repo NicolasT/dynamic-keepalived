@@ -20,6 +20,8 @@ import Network.DNS (ResolvSeed, withResolver, lookupA, lookupAAAA)
 
 import System.AtomicWrite.Writer.LazyByteString (atomicWriteFile)
 
+import Di.Monad (MonadDi)
+
 import DynamicKeepalived.DSL (MonadDSL(..), RecordType(..), ByteString)
 
 data IOTEnv = IOTEnv { iotEnvConfigPath :: FilePath
@@ -29,7 +31,7 @@ data IOTEnv = IOTEnv { iotEnvConfigPath :: FilePath
                      }
 
 newtype IOT m a = IOT { unIOT :: ReaderT IOTEnv m a }
-  deriving (Functor, Applicative, Monad, MonadIO, MonadTrans, MonadCatch, MonadThrow, MonadMask)
+  deriving (Functor, Applicative, Monad, MonadIO, MonadTrans, MonadCatch, MonadThrow, MonadMask, MonadDi level path message)
 
 runIO :: ResolvSeed -> ([IP] -> ByteString) -> FilePath -> FilePath -> IOT m a -> m a
 runIO resolvSeed renderConfig' configPath pidPath act =
