@@ -15,6 +15,8 @@ import Control.Monad.Writer.Class (MonadWriter, tell)
 import Control.Monad.Trans.Class (MonadTrans(..))
 import Control.Monad.Trans.Reader (ReaderT, runReaderT, reader)
 
+import Di.Monad (MonadDi)
+
 import DynamicKeepalived.DSL (MonadDSL(..), RecordType, ByteString, Domain, IP)
 
 data Interpreter m = Interpreter { interpretResolveDNS :: RecordType -> Domain -> m [IP]
@@ -60,7 +62,7 @@ tracer = Interpreter { interpretResolveDNS = \t d -> tell' (ResolveDNS t d) $> m
 
 
 newtype InterpreterT m a = InterpreterT { unInterpreterT :: ReaderT (Interpreter m) m a }
-  deriving (Functor, Applicative, Monad)
+  deriving (Functor, Applicative, Monad, MonadDi level path message)
 
 instance MonadTrans InterpreterT where
     lift = InterpreterT . lift
