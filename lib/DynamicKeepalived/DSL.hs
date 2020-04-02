@@ -11,6 +11,8 @@ module DynamicKeepalived.DSL (
     ) where
 
 import Control.Monad.Trans.Class (MonadTrans, lift)
+import Control.Monad.Trans.Identity (IdentityT)
+import Control.Monad.Trans.Reader (ReaderT)
 
 import Data.ByteString.Lazy (ByteString)
 
@@ -46,3 +48,6 @@ class Monad m => MonadDSL m where
     reloadKeepalived = lift reloadKeepalived
     default sleep :: (MonadTrans t, MonadDSL m', m ~ t m') => Word -> m ()
     sleep = lift . sleep
+
+instance MonadDSL m => MonadDSL (IdentityT m)
+instance MonadDSL m => MonadDSL (ReaderT e m)

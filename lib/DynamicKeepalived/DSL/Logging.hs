@@ -11,7 +11,7 @@ import Control.Monad.IO.Class (MonadIO)
 
 import Control.Monad.Catch (MonadCatch, MonadThrow, MonadMask)
 
-import Control.Monad.Trans.Class (MonadTrans, lift)
+import Control.Monad.Trans.Class (MonadTrans)
 import Control.Monad.Trans.Identity (IdentityT, runIdentityT)
 
 import Data.Text.Encoding (decodeUtf8)
@@ -41,7 +41,7 @@ instance ToValue DomainV where
 instance (MonadDSL m, MonadDi Level Path Message m) => MonadDSL (LoggingT m) where
     resolveDNS r d = LoggingT $ push "resolve-dns" $ attr "record-type" r $ attr "domain" (DomainV d) $ do
         info_ "Resolving DNS record"
-        res <- lift $ resolveDNS r d
+        res <- resolveDNS r d
         push "result" $ attr "count" (length res) $ do
             debug_ "DNS resolution returned"
             if not (null res)
@@ -50,18 +50,18 @@ instance (MonadDSL m, MonadDi Level Path Message m) => MonadDSL (LoggingT m) whe
         return res
     renderConfig l = LoggingT $ push "render-config" $ attr "count" (length l) $ do
         info_ "Rendering configuration"
-        c <- lift $ renderConfig l
+        c <- renderConfig l
         debug_ "Configuration rendering completed"
         return c
     writeConfig c = LoggingT $ push "write-config" $ do
         info_ "Writing configuration"
-        lift $ writeConfig c
+        writeConfig c
         debug_ "Configuration written"
     reloadKeepalived = LoggingT $ push "reload-keepalived" $ do
         info_ "Reloading keepalived"
-        lift reloadKeepalived
+        reloadKeepalived
         debug_ "Keepalived reloaded"
     sleep l = LoggingT $ push "sleep" $ attr "time" l $ do
         info_ "Sleeping"
-        lift $ sleep l
+        sleep l
         debug_ "Waking up again"
