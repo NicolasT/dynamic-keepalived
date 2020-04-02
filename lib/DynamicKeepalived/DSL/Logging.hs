@@ -39,7 +39,7 @@ instance ToValue DomainV where
     value = value . decodeUtf8 . unDomainV
 
 instance (MonadDSL m, MonadDi Level Path Message m) => MonadDSL (LoggingT m) where
-    resolveDNS r d = push "resolve-dns" $ attr "record-type" r $ attr "domain" (DomainV d) $ do
+    resolveDNS r d = LoggingT $ push "resolve-dns" $ attr "record-type" r $ attr "domain" (DomainV d) $ do
         info_ "Resolving DNS record"
         res <- lift $ resolveDNS r d
         push "result" $ attr "count" (length res) $ do
@@ -48,20 +48,20 @@ instance (MonadDSL m, MonadDi Level Path Message m) => MonadDSL (LoggingT m) whe
                then forM_ res $ \ip -> attr "address" (IPV ip) $ debug_ "Resolved domain"
                else notice_ "No addresses returned"
         return res
-    renderConfig l = push "render-config" $ attr "count" (length l) $ do
+    renderConfig l = LoggingT $ push "render-config" $ attr "count" (length l) $ do
         info_ "Rendering configuration"
         c <- lift $ renderConfig l
         debug_ "Configuration rendering completed"
         return c
-    writeConfig c = push "write-config" $ do
+    writeConfig c = LoggingT $ push "write-config" $ do
         info_ "Writing configuration"
         lift $ writeConfig c
         debug_ "Configuration written"
-    reloadKeepalived = push "reload-keepalived" $ do
+    reloadKeepalived = LoggingT $ push "reload-keepalived" $ do
         info_ "Reloading keepalived"
         lift reloadKeepalived
         debug_ "Keepalived reloaded"
-    sleep l = push "sleep" $ attr "time" l $ do
+    sleep l = LoggingT $ push "sleep" $ attr "time" l $ do
         info_ "Sleeping"
         lift $ sleep l
         debug_ "Waking up again"
