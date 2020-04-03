@@ -11,7 +11,7 @@ import Control.Monad.Catch (MonadCatch, MonadMask, MonadThrow, throwM)
 
 import System.Posix.Signals (signalProcess, sigHUP)
 
-import Control.Monad.Trans.Class (MonadTrans)
+import Control.Monad.Trans.Class (MonadTrans(..))
 import Control.Monad.Trans.Reader (ReaderT, runReaderT, reader)
 
 import Data.IP (IP(..))
@@ -24,16 +24,19 @@ import Di.Monad (MonadDi)
 
 import DynamicKeepalived.DSL (MonadDSL(..), RecordType(..), ByteString)
 
-data IOTEnv = IOTEnv { iotEnvConfigPath :: FilePath
-                     , iotEnvPidPath :: FilePath
-                     , iotEnvResolvSeed :: ResolvSeed
-                     , iotEnvRenderConfig :: [IP] -> ByteString
-                     }
+data IOTEnv m = IOTEnv { iotEnvConfigPath :: FilePath
+                       , iotEnvPidPath :: FilePath
+                       , iotEnvResolvSeed :: ResolvSeed
+                       , iotEnvRenderConfig :: [IP] -> m ByteString
+                       }
 
-newtype IOT m a = IOT { unIOT :: ReaderT IOTEnv m a }
-  deriving (Functor, Applicative, Monad, MonadIO, MonadTrans, MonadCatch, MonadThrow, MonadMask, MonadDi level path message)
+newtype IOT m a = IOT { unIOT :: ReaderT (IOTEnv m) m a }
+  deriving (Functor, Applicative, Monad, MonadIO, MonadCatch, MonadThrow, MonadMask, MonadDi level path message)
 
-runIO :: ResolvSeed -> ([IP] -> ByteString) -> FilePath -> FilePath -> IOT m a -> m a
+instance MonadTrans IOT where
+    lift = IOT . lift
+
+runIO :: ResolvSeed -> ([IP] -> m ByteString) -> FilePath -> FilePath -> IOT m a -> m a
 runIO resolvSeed renderConfig' configPath pidPath act =
     runReaderT (unIOT act) $ IOTEnv configPath pidPath resolvSeed renderConfig'
 
@@ -45,8 +48,9 @@ instance (MonadIO m, MonadThrow m) => MonadDSL (IOT m) where
                 A -> fmap (fmap IPv4) <$> lookupA resolver d
                 AAAA -> fmap (fmap IPv6) <$> lookupAAAA resolver d
         either throwM pure res
-    renderConfig as = IOT $
-        reader iotEnvRenderConfig <*> pure as
+    renderConfig as = IOT $ do
+        fn <- reader iotEnvRenderConfig
+        lift $ fn as
     writeConfig bs = IOT $ do
         path <- reader iotEnvConfigPath
         liftIO $ atomicWriteFile path bs

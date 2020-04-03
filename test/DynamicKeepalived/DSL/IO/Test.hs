@@ -42,7 +42,7 @@ spec = do
         it "works" $ do
             let ips = ["127.0.0.1"]
                 bs = fromString $ "addresses: " <> show ips
-                render ["127.0.0.1"] = bs
+                render ["127.0.0.1"] = return bs
                 render _ = error "Unexpected input"
                 act = runIO undefined render undefined undefined $
                         renderConfig ips
