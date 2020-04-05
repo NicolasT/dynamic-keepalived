@@ -24,7 +24,7 @@ import Di.Df1 (ToValue(..))
 
 data RecordType = A
                 | AAAA
-  deriving (Show, Eq, Enum, Bounded)
+  deriving (Show, Read, Eq, Enum, Bounded)
 
 instance ToValue RecordType where
     value v = case v of

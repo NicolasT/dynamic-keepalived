@@ -1,0 +1,21 @@
+let List/map = https://prelude.dhall-lang.org/v15.0.0/List/map sha256:dd845ffb4568d40327f2a817eb42d1c6138b929ca758d50bc33112ef3c885680
+let Text/concatSep = https://prelude.dhall-lang.org/v15.0.0/Text/concatSep sha256:e4401d69918c61b92a4c0288f7d60a6560ca99726138ed8ebc58dca2cd205e58
+
+let real_server = \(ip : IP) -> \(port : Natural) -> ''
+    real_server ${IP/show ip} ${Natural/show port} {
+        weight 1
+    }
+''
+
+in \(ip : IP) -> \(port : Natural) -> \(ips : List IP) ->
+    let real_servers = List/map IP Text (\(ip : IP) -> real_server ip port) ips
+    in ''
+virtual_server ${IP/show ip} ${Natural/show port} {
+    delay_loop 6
+    lb_algo rr
+    lb_kind DR
+    protocol TCP
+
+${Text/concatSep "\n" real_servers}
+}
+''
